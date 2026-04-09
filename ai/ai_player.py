@@ -8,6 +8,10 @@ from config import (
 from ai.minimax import minimax, minimax_alpha_beta
 
 
+def get_depth_from_difficulty(difficulty: str) -> int:
+    return get_depth_for_difficulty(difficulty)
+
+
 class AIPlayer:
     def __init__(
         self,
@@ -60,7 +64,3 @@ class AIPlayer:
             "algorithm": self.algorithm,
             "difficulty": self.difficulty,
         }
-
-
-def get_depth_from_difficulty(difficulty: str) -> int:
-    return get_depth_for_difficulty(difficulty)
