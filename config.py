@@ -1,3 +1,4 @@
+#Mohamed Hamouda 9/4/26
 """
 Project configuration for the Connect Four AI system.
 
