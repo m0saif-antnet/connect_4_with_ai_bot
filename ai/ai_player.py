@@ -1,4 +1,4 @@
-from Connect_4_with_AI_bot.config import (
+from config import (
     DEFAULT_ALGORITHM,
     DEFAULT_DIFFICULTY,
     get_depth_for_difficulty,

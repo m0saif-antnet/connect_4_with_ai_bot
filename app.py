@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, render_template, request
 
-from Connect_4_with_AI_bot.config import (
+from config import (
     AI_PIECE,
     DEFAULT_ALGORITHM,
     DEFAULT_DIFFICULTY,

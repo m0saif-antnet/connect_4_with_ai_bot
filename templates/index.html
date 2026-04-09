@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connect Four AI</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+  <main class="page">
+    <section class="landing-card">
+      <h1>Intelligent Connect Four Player</h1>
+      <p>
+        Play Connect Four against an AI powered by Minimax,
+        Alpha-Beta Pruning, and Heuristic Evaluation.
+      </p>
+      <a class="start-link" href="{{ url_for('game_page') }}">Start Game</a>
+    </section>
+  </main>
+</body>
+</html>

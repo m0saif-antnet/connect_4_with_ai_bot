@@ -1,6 +1,6 @@
 from copy import deepcopy
 
-from Connect_4_with_AI_bot.config import COLS, EMPTY, ROWS
+from config import COLS, EMPTY, ROWS
 
 
 def create_board() -> list[list[int]]:
