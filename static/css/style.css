@@ -153,7 +153,10 @@ body {
   cursor: pointer;
   transition: transform 0.15s ease, opacity 0.15s ease;
 }
-
+.cell.player-one,  /* NEW: drop animation when player or AI places a piece */
+.cell.player-two {
+  animation: drop 0.35s ease;
+}
 .cell:hover {
   transform: scale(1.05);
 }
@@ -225,4 +228,14 @@ body {
   .control-group button {
     min-width: 100%;
   }
+  @keyframes drop {
+  from {
+    transform: translateY(-60px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+ }
 }

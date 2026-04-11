@@ -3,7 +3,8 @@ const COLS = 7;
 const EMPTY = 0;
 const HUMAN_PIECE = 1;
 const AI_PIECE = 2;
-
+let timeLeft = 10;  // time allowed per turn (in seconds)
+let timerInterval = null; // stores the interval so we can stop it later
 let board = [];
 let gameOver = false;
 let isAiThinking = false;
@@ -19,7 +20,45 @@ const infoDifficulty = document.getElementById("info-difficulty");
 const infoColumn = document.getElementById("info-column");
 const infoScore = document.getElementById("info-score");
 const infoDepth = document.getElementById("info-depth");
+const humanSound = new Audio("/static/sounds/human.wav"); // sound when human player makes a move
+const aiSound = new Audio("/static/sounds/ai.wav");   // sound when AI makes a move
+const winSound = new Audio("/static/sounds/win.wav"); // sound when a player wins
 
+function startTimer() {
+  stopTimer(); // clear any existing timer before starting a new one
+
+  timeLeft = 10; // reset timer to 10 seconds
+  updateTimerUI(); // update timer display on screen
+
+  timerInterval = setInterval(() => {
+    timeLeft--; // decrease time every second
+    updateTimerUI();  // update UI
+
+    if (timeLeft <= 0) {   // if time runs out
+      stopTimer();     // stop the timer
+      updateStatusMessage("Time is up ⏰");  // show message to player 
+    }
+  }, 1000);   // runs every 1 second
+}
+
+function stopTimer() { 
+  if (timerInterval) {
+    clearInterval(timerInterval);   // stop the interval
+    timerInterval = null;    // reset variable
+  }
+}
+
+function updateTimerUI() {
+  const timerElement = document.getElementById("timer");
+
+  timerElement.textContent = "Time: " + timeLeft;  // display remaining time
+
+  if (timeLeft <= 3) {
+    timerElement.style.color = "red";  // change color when time is running low to red color
+  } else {
+    timerElement.style.color = "#facc15"; // yellow color
+  }
+}
 function createEmptyBoard() {
   return Array.from({ length: ROWS }, () => Array(COLS).fill(EMPTY));
 }
@@ -28,10 +67,12 @@ function initializeGame() {
   board = createEmptyBoard();
   gameOver = false;
   isAiThinking = false;
+  
   updateStatusMessage("Your turn");
   resetAiInfo();
   renderBoard(board);
   syncSettingsInfo();
+    startTimer();
 }
 
 function renderBoard(currentBoard) {
@@ -73,6 +114,8 @@ function handleCellClick(event) {
   }
 
   renderBoard(board);
+
+  startTimer();
 
   if (checkWin(board, HUMAN_PIECE)) {
     gameOver = true;
@@ -117,6 +160,9 @@ function applyFrontendMove(currentBoard, col, piece) {
   if (row === null) return false;
 
   currentBoard[row][col] = piece;
+    if (piece === HUMAN_PIECE) {
+    humanSound.play();  // play sound when human makes a move
+  }
   return true;
 }
 
@@ -160,6 +206,7 @@ function handleAiResponse(responseData) {
   }
 
   applyFrontendMove(board, aiCol, AI_PIECE);
+   aiSound.play();  // play sound when AI makes a move
   isAiThinking = false;
 
   renderBoard(board);
@@ -167,11 +214,11 @@ function handleAiResponse(responseData) {
 
   if (checkWin(board, AI_PIECE)) {
     gameOver = true;
+    winSound.play();  // play sound when a player wins the game
     updateStatusMessage(`AI wins. Column ${aiCol}`);
     renderBoard(board);
     return;
   }
-
   if (isBoardFull(board)) {
     gameOver = true;
     updateStatusMessage("Draw game.");
@@ -180,6 +227,8 @@ function handleAiResponse(responseData) {
   }
 
   updateStatusMessage(`Your turn. AI played column ${aiCol}`);
+
+  startTimer();
 }
 
 function updateStatusMessage(message) {
