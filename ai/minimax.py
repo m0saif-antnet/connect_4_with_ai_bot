@@ -2,12 +2,14 @@
 #
 import math
 
-from heuristics import score_position
+from .heuristics import score_position
 
 from game.board import (
     copy_board,
     apply_move,
-    get_valid_moves,
+    get_valid_moves)
+
+from game.rules import(
     winning_move,
     is_terminal_state,
     get_winner,
