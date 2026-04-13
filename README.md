@@ -73,9 +73,9 @@ AI difficulty is controlled using **search depth**.
 
 | Level | Depth |
 |------|------|
-| Easy | 2 |
-| Medium | 4 |
-| Hard | 6 |
+| Easy | 1 |
+| Medium | 2 |
+| Hard | 3 |
 
 Higher depth means:
 - Stronger AI
