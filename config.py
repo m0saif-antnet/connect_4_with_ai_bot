@@ -27,9 +27,9 @@ VALID_PIECES: set[int] = {EMPTY, HUMAN_PIECE, AI_PIECE}
 # =========================
 # Difficulty Configuration
 # =========================
-EASY_DEPTH: int = 2
-MEDIUM_DEPTH: int = 4
-HARD_DEPTH: int = 6
+EASY_DEPTH: int = 1
+MEDIUM_DEPTH: int = 2
+HARD_DEPTH: int = 3
 
 DIFFICULTY_DEPTH_MAP: dict[str, int] = {
     "easy": EASY_DEPTH,
