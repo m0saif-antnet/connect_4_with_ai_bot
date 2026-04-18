@@ -1,4 +1,4 @@
-* {
+ * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -153,10 +153,13 @@ body {
   cursor: pointer;
   transition: transform 0.15s ease, opacity 0.15s ease;
 }
-.cell.player-one,  /* NEW: drop animation when player or AI places a piece */
+
+/* drop animation */
+.cell.player-one,
 .cell.player-two {
   animation: drop 0.35s ease;
 }
+
 .cell:hover {
   transform: scale(1.05);
 }
@@ -207,6 +210,7 @@ body {
   margin-bottom: 6px;
 }
 
+/* responsive */
 @media (max-width: 768px) {
   .board {
     grid-template-columns: repeat(7, 44px);
@@ -228,7 +232,10 @@ body {
   .control-group button {
     min-width: 100%;
   }
-  @keyframes drop {
+}
+
+/* animation keyframes */
+@keyframes drop {
   from {
     transform: translateY(-60px);
     opacity: 0;
@@ -237,5 +244,4 @@ body {
     transform: translateY(0);
     opacity: 1;
   }
- }
 }
