@@ -224,7 +224,7 @@ function updateAiInfo(details) {
   infoColumn.textContent = details.column ?? "-";
   infoScore.textContent = details.score ?? "-";
   infoDepth.textContent = details.depth ?? "-";
-  / NEW: display AI thinking time
+  // NEW: display AI thinking time
   infoTime.textContent = details.time ?? "-";
 }
 
