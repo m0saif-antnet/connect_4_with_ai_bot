@@ -157,7 +157,7 @@ body {
 /* drop animation */
 .cell.player-one,
 .cell.player-two {
-  animation: drop 0.35s ease;
+  animation: drop 0.4s ease;
 }
 
 .cell:hover {
@@ -234,7 +234,7 @@ body {
   }
 }
 
-/* animation keyframes */
+ /* animation keyframes */
 @keyframes drop {
   from {
     transform: translateY(-60px);
@@ -244,4 +244,33 @@ body {
     transform: translateY(0);
     opacity: 1;
   }
+}
+
+/* confetti animation */
+ .confetti {
+  position: fixed;
+  top: -10px;
+  width: 8px;
+  height: 14px;
+  opacity: 0.9;
+  animation: confettiFall 2s linear forwards;
+}
+
+@keyframes confettiFall {
+  to {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 1;
+  }
+}
+
+.shake {
+  animation: shake 0.4s;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
 }

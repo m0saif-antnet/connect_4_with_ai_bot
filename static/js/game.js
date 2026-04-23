@@ -89,6 +89,7 @@ function handleCellClick(event) {
   if (checkWin(board, HUMAN_PIECE)) {
     gameOver = true;
     winSound.play();
+    launchConfetti();
     updateStatusMessage("You win!");
     renderBoard(board);
     return;
@@ -100,12 +101,17 @@ function handleCellClick(event) {
     renderBoard(board);
     return;
   }
+ isAiThinking = true;
+updateStatusMessage("AI is thinking...");
+renderBoard(board);
 
-  isAiThinking = true;
-  updateStatusMessage("AI is thinking...");
-  renderBoard(board);
-
-  sendAiMoveRequest(board, difficultySelect.value, algorithmSelect.value);
+setTimeout(() => {
+  sendAiMoveRequest(
+    board,
+    difficultySelect.value,
+    algorithmSelect.value
+  );
+}, 600);
 }
 
 function getColumnFromClick(event) {
@@ -190,6 +196,7 @@ function handleAiResponse(responseData) {
   if (checkWin(board, AI_PIECE)) {
     gameOver = true;
     winSound.play();
+    shakeScreen();
     updateStatusMessage(`AI wins. Column ${aiCol}`);
     renderBoard(board);
     return;
@@ -205,6 +212,21 @@ function handleAiResponse(responseData) {
   updateStatusMessage(`Your turn. AI played column ${aiCol}`);
 }
 
+// Win effect
+function launchConfetti() {
+  for (let i = 0; i < 60; i++) {
+    const c = document.createElement("div");
+    c.classList.add("confetti");
+    c.style.left = Math.random() * 100 + "vw";
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 3000);
+  }
+}
+// Lose effect
+function shakeScreen() {
+  document.body.classList.add("shake");
+  setTimeout(() => document.body.classList.remove("shake"), 500);
+}
 function updateStatusMessage(message) {
   statusMessageElement.textContent = message;
 }
@@ -317,4 +339,21 @@ restartButton.addEventListener("click", restartGame);
 difficultySelect.addEventListener("change", syncSettingsInfo);
 algorithmSelect.addEventListener("change", syncSettingsInfo);
 
+function launchConfetti() {
+  const colors = ["#facc15", "#ef4444", "#22c55e", "#3b82f6", "#a855f7"];
+
+  for (let i = 0; i < 80; i++) {
+    const confetti = document.createElement("div");
+    confetti.classList.add("confetti");
+    confetti.style.left = Math.random() * 100 + "vw";
+    confetti.style.background =
+      colors[Math.floor(Math.random() * colors.length)];
+    confetti.style.animationDuration =
+      (Math.random() * 2 + 1) + "s";
+
+    document.body.appendChild(confetti);
+
+    setTimeout(() => confetti.remove(), 3000);
+  }
+}
 initializeGame();
