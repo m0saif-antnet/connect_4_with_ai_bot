@@ -23,7 +23,9 @@ def create_app() -> Flask:
     @app.route(HOME_ENDPOINT, methods=["GET"])
     def home():
         return render_template("index.html")
-
+    @app.route("/settings")
+    def settings_page():
+        return render_template("settings.html")
     @app.route(GAME_PAGE_ENDPOINT, methods=["GET"])
     def game_page():
         return render_template("game.html")

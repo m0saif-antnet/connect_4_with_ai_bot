@@ -10,13 +10,19 @@ const AI_PIECE = 2;
 let board = [];
 let gameOver = false;
 let isAiThinking = false;
-
+let lastAiMove = null;
 // DOM elements
 const boardElement = document.getElementById("board");
 const statusMessageElement = document.getElementById("status-message");
 const restartButton = document.getElementById("restart-button");
-const difficultySelect = document.getElementById("difficulty-select");
-const algorithmSelect = document.getElementById("algorithm-select");
+const urlParams = new URLSearchParams(window.location.search);
+const difficultySelect = {
+  value: urlParams.get("difficulty") || "medium"
+};
+
+const algorithmSelect = {
+  value: urlParams.get("algorithm") || "alpha_beta"
+};
 
 const infoAlgorithm = document.getElementById("info-algorithm");
 const infoDifficulty = document.getElementById("info-difficulty");
@@ -28,8 +34,6 @@ const infoDepth = document.getElementById("info-depth");
 const humanSound = new Audio("/static/sounds/human.wav");
 const aiSound = new Audio("/static/sounds/ai.wav");
 const winSound = new Audio("/static/sounds/win.wav");
-// NEW: AI thinking time element
-const infoTime = document.getElementById("info-time");
 
 function createEmptyBoard() {
   return Array.from({ length: ROWS }, () => Array(COLS).fill(EMPTY));
@@ -39,6 +43,7 @@ function initializeGame() {
   board = createEmptyBoard();
   gameOver = false;
   isAiThinking = false;
+  lastAiMove = null;
 
   updateStatusMessage("Your turn");
   resetAiInfo();
@@ -61,6 +66,13 @@ function renderBoard(currentBoard) {
       } else if (currentBoard[row][col] === AI_PIECE) {
         cell.classList.add("player-two");
       }
+      if (
+        lastAiMove &&
+        lastAiMove.row === row &&
+        lastAiMove.col === col
+      ) {
+        cell.classList.add("last-move");
+      }
 
       if (gameOver || isAiThinking) {
         cell.classList.add("disabled");
@@ -74,11 +86,12 @@ function renderBoard(currentBoard) {
 
 function handleCellClick(event) {
   if (gameOver || isAiThinking) return;
-
+  lastAiMove = null;
   const col = getColumnFromClick(event);
   if (col === null) return;
 
-  const success = applyFrontendMove(board, col, HUMAN_PIECE);
+  const row = applyFrontendMove(board, col, HUMAN_PIECE);
+  const success = row !== null;
   if (!success) {
     updateStatusMessage("Invalid move. Please choose another column.");
     return;
@@ -101,17 +114,17 @@ function handleCellClick(event) {
     renderBoard(board);
     return;
   }
- isAiThinking = true;
-updateStatusMessage("AI is thinking...");
-renderBoard(board);
+  isAiThinking = true;
+  updateStatusMessage("AI is thinking...");
+  renderBoard(board);
 
-setTimeout(() => {
-  sendAiMoveRequest(
-    board,
-    difficultySelect.value,
-    algorithmSelect.value
-  );
-}, 600);
+  setTimeout(() => {
+    sendAiMoveRequest(
+      board,
+      difficultySelect.value,
+      algorithmSelect.value
+    );
+  }, 600);
 }
 
 function getColumnFromClick(event) {
@@ -130,10 +143,10 @@ function findAvailableRow(currentBoard, col) {
 }
 
 function applyFrontendMove(currentBoard, col, piece) {
-  if (col < 0 || col >= COLS) return false;
+  if (col < 0 || col >= COLS) return null;
 
   const row = findAvailableRow(currentBoard, col);
-  if (row === null) return false;
+  if (row === null) return null;
 
   currentBoard[row][col] = piece;
 
@@ -141,7 +154,7 @@ function applyFrontendMove(currentBoard, col, piece) {
     humanSound.play();
   }
 
-  return true;
+  return row;
 }
 
 async function sendAiMoveRequest(currentBoard, difficulty, algorithm) {
@@ -185,7 +198,8 @@ function handleAiResponse(responseData) {
     return;
   }
 
-  applyFrontendMove(board, aiCol, AI_PIECE);
+  const aiRow = applyFrontendMove(board, aiCol, AI_PIECE);
+  lastAiMove = { row: aiRow, col: aiCol };
   aiSound.play();
 
   isAiThinking = false;
@@ -246,15 +260,12 @@ function updateAiInfo(details) {
   infoColumn.textContent = details.column ?? "-";
   infoScore.textContent = details.score ?? "-";
   infoDepth.textContent = details.depth ?? "-";
-  // NEW: display AI thinking time
-  infoTime.textContent = details.time ?? "-";
 }
 
 function resetAiInfo() {
   infoColumn.textContent = "-";
   infoScore.textContent = "-";
   infoDepth.textContent = "-";
-  infoTime.textContent = "-"; // NEW
   syncSettingsInfo();
 }
 
@@ -336,8 +347,6 @@ function checkNegativeDiagonalWin(currentBoard, piece) {
 }
 
 restartButton.addEventListener("click", restartGame);
-difficultySelect.addEventListener("change", syncSettingsInfo);
-algorithmSelect.addEventListener("change", syncSettingsInfo);
 
 function launchConfetti() {
   const colors = ["#facc15", "#ef4444", "#22c55e", "#3b82f6", "#a855f7"];

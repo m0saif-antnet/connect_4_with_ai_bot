@@ -15,31 +15,9 @@
         <h1>Connect Four</h1>
         <p class="subtitle">Human vs AI</p>
       </header>
-
-      <section class="controls-panel">
-
-        <div class="control-group">
-          <label for="difficulty-select">Difficulty</label>
-          <select id="difficulty-select">
-            <option value="easy">Easy</option>
-            <option value="medium" selected>Medium</option>
-            <option value="hard">Hard</option>
-          </select>
-        </div>
-
-        <div class="control-group">
-          <label for="algorithm-select">Algorithm</label>
-          <select id="algorithm-select">
-            <option value="alpha_beta" selected>Alpha-Beta</option>
-            <option value="minimax">Minimax</option>
-          </select>
-        </div>
-
-        <div class="control-group">
-          <button id="restart-button" type="button">Restart Game</button>
-        </div>
-
-      </section>
+      <div class="control-group">
+      <button id="restart-button" type="button">Restart Game</button>
+      </div>
 
       <section class="status-panel">
         <p id="status-message">Your turn</p>
@@ -80,10 +58,6 @@
             <span id="info-depth">-</span>
           </div>
 
-          <div class="info-item">
-            <span class="info-label">Time</span>
-            <span id="info-time">-</span>
-          </div>
 
         </div>
 
