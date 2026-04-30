@@ -18,7 +18,17 @@
       <div class="control-group">
       <button id="restart-button" type="button">Restart Game</button>
       </div>
+      <!-- Restart Popup -->
+<div id="restart-modal" class="modal hidden">
+  <div class="modal-content">
+    <h3>Restart Game</h3>
+    <p>What do you want to do?</p>
 
+    <button id="restart-match-btn">Restart Match</button>
+    <button id="change-settings-btn">Change Settings</button>
+    <button id="cancel-btn">Cancel</button>
+  </div>
+</div>
       <section class="status-panel">
         <p id="status-message">Your turn</p>
       </section>

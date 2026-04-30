@@ -15,6 +15,10 @@ let lastAiMove = null;
 const boardElement = document.getElementById("board");
 const statusMessageElement = document.getElementById("status-message");
 const restartButton = document.getElementById("restart-button");
+const restartModal = document.getElementById("restart-modal");
+const restartMatchBtn = document.getElementById("restart-match-btn");
+const changeSettingsBtn = document.getElementById("change-settings-btn");
+const cancelBtn = document.getElementById("cancel-btn");
 const urlParams = new URLSearchParams(window.location.search);
 const difficultySelect = {
   value: urlParams.get("difficulty") || "medium"
@@ -345,9 +349,6 @@ function checkNegativeDiagonalWin(currentBoard, piece) {
   }
   return false;
 }
-
-restartButton.addEventListener("click", restartGame);
-
 function launchConfetti() {
   const colors = ["#facc15", "#ef4444", "#22c55e", "#3b82f6", "#a855f7"];
 
@@ -365,4 +366,24 @@ function launchConfetti() {
     setTimeout(() => confetti.remove(), 3000);
   }
 }
+// Open popup instead of instant restart
+restartButton.addEventListener("click", () => {
+  restartModal.classList.remove("hidden");
+});
+
+// Restart match (same settings)
+restartMatchBtn.addEventListener("click", () => {
+  restartModal.classList.add("hidden");
+  restartGame();
+});
+
+// Go to settings page
+changeSettingsBtn.addEventListener("click", () => {
+  window.location.href = "/settings"; // change if your route is different
+});
+
+// Close popup
+cancelBtn.addEventListener("click", () => {
+  restartModal.classList.add("hidden");
+});
 initializeGame();
