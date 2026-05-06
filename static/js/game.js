@@ -11,6 +11,7 @@ let board = [];
 let gameOver = false;
 let isAiThinking = false;
 let lastAiMove = null;
+let winningCells = [];
 // DOM elements
 const boardElement = document.getElementById("board");
 const statusMessageElement = document.getElementById("status-message");
@@ -48,6 +49,7 @@ function initializeGame() {
   gameOver = false;
   isAiThinking = false;
   lastAiMove = null;
+  winningCells = [];
 
   updateStatusMessage("Your turn");
   resetAiInfo();
@@ -81,7 +83,11 @@ function renderBoard(currentBoard) {
       if (gameOver || isAiThinking) {
         cell.classList.add("disabled");
       }
-
+      if (
+      winningCells.some(c => c.row === row && c.col === col)
+      ) {
+        cell.classList.add("winning-cell");
+      }
       cell.addEventListener("click", handleCellClick);
       boardElement.appendChild(cell);
     }
@@ -102,8 +108,10 @@ function handleCellClick(event) {
   }
 
   renderBoard(board);
-
-  if (checkWin(board, HUMAN_PIECE)) {
+  const humanWin = checkWin(board, HUMAN_PIECE);
+  if (humanWin) {
+    winningCells = humanWin;
+    lastAiMove = null;
     gameOver = true;
     winSound.play();
     launchConfetti();
@@ -211,7 +219,10 @@ function handleAiResponse(responseData) {
   renderBoard(board);
   updateAiInfo(responseData);
 
-  if (checkWin(board, AI_PIECE)) {
+  const aiWin = checkWin(board, AI_PIECE);
+  if (aiWin) {
+    winningCells = aiWin;
+    lastAiMove = null;
     gameOver = true;
     winSound.play();
     shakeScreen();
@@ -295,11 +306,16 @@ function checkHorizontalWin(currentBoard, piece) {
         currentBoard[row][col + 2] === piece &&
         currentBoard[row][col + 3] === piece
       ) {
-        return true;
+        return [
+          { row, col },
+          { row, col: col + 1 },
+          { row, col: col + 2 },
+          { row, col: col + 3 }
+        ];
       }
     }
   }
-  return false;
+  return null;
 }
 
 function checkVerticalWin(currentBoard, piece) {
@@ -311,11 +327,16 @@ function checkVerticalWin(currentBoard, piece) {
         currentBoard[row + 2][col] === piece &&
         currentBoard[row + 3][col] === piece
       ) {
-        return true;
+        return [
+          { row, col },
+          { row: row + 1, col },
+          { row: row + 2, col },
+          { row: row + 3, col }
+        ];
       }
     }
   }
-  return false;
+  return null;
 }
 
 function checkPositiveDiagonalWin(currentBoard, piece) {
@@ -327,11 +348,16 @@ function checkPositiveDiagonalWin(currentBoard, piece) {
         currentBoard[row - 2][col + 2] === piece &&
         currentBoard[row - 3][col + 3] === piece
       ) {
-        return true;
+        return [
+          { row, col },
+          { row: row - 1, col: col + 1 },
+          { row: row - 2, col: col + 2 },
+          { row: row - 3, col: col + 3 }
+        ];
       }
     }
   }
-  return false;
+  return null;
 }
 
 function checkNegativeDiagonalWin(currentBoard, piece) {
@@ -343,11 +369,16 @@ function checkNegativeDiagonalWin(currentBoard, piece) {
         currentBoard[row + 2][col + 2] === piece &&
         currentBoard[row + 3][col + 3] === piece
       ) {
-        return true;
+        return [
+          { row, col },
+          { row: row + 1, col: col + 1 },
+          { row: row + 2, col: col + 2 },
+          { row: row + 3, col: col + 3 }
+        ];
       }
     }
   }
-  return false;
+  return null;
 }
 function launchConfetti() {
   const colors = ["#facc15", "#ef4444", "#22c55e", "#3b82f6", "#a855f7"];
