@@ -131,12 +131,7 @@ def minimax_alpha_beta(
             alpha = max(alpha, best_score)
 
             if alpha >= beta:
-<<<<<<< HEAD
                 break 
-
-=======
-                break   # Beta cutoff
->>>>>>> cd8613ef14430134016ec5bccf730f54922d6f86
         return (best_col, best_score)
 
     else:
