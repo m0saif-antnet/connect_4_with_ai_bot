@@ -27,13 +27,6 @@ def simulate_move(board: list[list[int]], col: int, piece: int) -> list[list[int
 def get_ordered_moves(valid_moves: list[int]) -> list[int]:
     center = 3  
     return sorted(valid_moves, key=lambda col: abs(center - col))  # Sort by distance from center (closest to center = tried first)
-
-
-<<<<<<< HEAD
-
-=======
-#  ============================================================================= VERSION 1: Basic Minimax () ============================================================================= #
->>>>>>> cd8613ef14430134016ec5bccf730f54922d6f86
 def minimax(
     board: list[list[int]],
     depth: int,
@@ -83,12 +76,6 @@ def minimax(
                 best_col = col
 
         return (best_col, best_score)
-
-<<<<<<< HEAD
-=======
-# ============================================================================= Minimax WITH Alpha-Beta Pruning ============================================================================= #
->>>>>>> cd8613ef14430134016ec5bccf730f54922d6f86
-
 def minimax_alpha_beta(
     board: list[list[int]],
     depth: int,
