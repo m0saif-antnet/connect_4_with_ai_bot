@@ -63,5 +63,4 @@ class GameState:
             self.winner = None
 
     def clone(self):
-        # return a deep copy (useful for AI)
         return copy.deepcopy(self)

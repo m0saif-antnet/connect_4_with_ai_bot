@@ -14,8 +14,6 @@ from game.rules import(
     get_winner,
 )
 
-# HELPERS 
-
 def evaluate_terminal_state(board: list[list[int]], ai_piece: int, opponent_piece: int) -> int: # 
     winner = get_winner(board)
     if winner == ai_piece:
@@ -38,8 +36,6 @@ def get_ordered_moves(valid_moves: list[int]) -> list[int]:
     return sorted(valid_moves, key=lambda col: abs(center - col))  # Sort by distance from center (closest to center = tried first)
 
 
-#  ============================================================================= VERSION 1: Basic Minimax () =============================================================================
-
 
 def minimax(
     board: list[list[int]],
@@ -52,7 +48,6 @@ def minimax(
     valid_moves = get_valid_moves(board)
     terminal = is_terminal_state(board)
 
-    # --- Base cases: stop recursion ---
 
     if terminal:
        
@@ -66,7 +61,6 @@ def minimax(
        
         return (None, 0)
 
-    # --- Recursive cases ---
 
     if maximizing_player:
         best_score = -math.inf
@@ -83,7 +77,6 @@ def minimax(
         return (best_col, best_score)
 
     else:
-        # Opponent's turn: look for the move with the LOWEST score
         best_score = math.inf
         best_col = valid_moves[0]
 
@@ -97,7 +90,6 @@ def minimax(
 
         return (best_col, best_score)
 
-# ============================================================================= Minimax WITH Alpha-Beta Pruning =============================================================================
 
 def minimax_alpha_beta(
     board: list[list[int]],
@@ -112,7 +104,6 @@ def minimax_alpha_beta(
     valid_moves = get_valid_moves(board)
     terminal = is_terminal_state(board)
 
-    # --- Base cases: stop recursion ---
 
     if terminal:
         return (None, evaluate_terminal_state(board, ai_piece, opponent_piece))
@@ -125,10 +116,8 @@ def minimax_alpha_beta(
 
     ordered_moves = get_ordered_moves(valid_moves)
 
-    # --- Recursive cases with pruning ---
 
     if maximizing_player:
-        # AI's turn: maximize the score
         best_score = -math.inf
         best_col = ordered_moves[0]
 
@@ -144,15 +133,12 @@ def minimax_alpha_beta(
 
             alpha = max(alpha, best_score)
 
-            # Prune: the opponent already has a path that's better for them
-            # than anything we could get here — stop searching this branch
             if alpha >= beta:
-                break   # Beta cutoff
+                break 
 
         return (best_col, best_score)
 
     else:
-        # Opponent's turn: minimize the score
         best_score = math.inf
         best_col = ordered_moves[0]
 
@@ -166,10 +152,8 @@ def minimax_alpha_beta(
                 best_score = score
                 best_col = col
 
-            # Update beta: `best_score` ( )
             beta = min(beta, best_score)
 
-            # Prune: the AI already has a path that's better for it
            
             if alpha >= beta:
                 break   

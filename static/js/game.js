@@ -1,4 +1,3 @@
-// Game board dimensions
 const ROWS = 6;
 const COLS = 7;
 
@@ -12,7 +11,6 @@ let gameOver = false;
 let isAiThinking = false;
 let lastAiMove = null;
 let winningCells = [];
-// DOM elements
 const boardElement = document.getElementById("board");
 const statusMessageElement = document.getElementById("status-message");
 const restartButton = document.getElementById("restart-button");
@@ -35,7 +33,6 @@ const infoColumn = document.getElementById("info-column");
 const infoScore = document.getElementById("info-score");
 const infoDepth = document.getElementById("info-depth");
 
-// sound effects
 const humanSound = new Audio("/static/sounds/human.wav");
 const aiSound = new Audio("/static/sounds/ai.wav");
 const winSound = new Audio("/static/sounds/win.wav");
@@ -408,12 +405,11 @@ restartMatchBtn.addEventListener("click", () => {
   restartGame();
 });
 
-// Go to settings page
+
 changeSettingsBtn.addEventListener("click", () => {
-  window.location.href = "/settings"; // change if your route is different
+  window.location.href = "/settings"; 
 });
 
-// Close popup
 cancelBtn.addEventListener("click", () => {
   restartModal.classList.add("hidden");
 });
