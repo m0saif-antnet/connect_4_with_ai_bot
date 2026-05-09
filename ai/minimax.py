@@ -142,3 +142,4 @@ def minimax_alpha_beta(
                 break   
 
         return (best_col, best_score)
+ 

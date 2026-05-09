@@ -107,4 +107,4 @@ def build_error_response(message: str, status_code: int = 400):
 app = create_app()
 
 if __name__ == "__main__":
-    app.run(debug=DEBUG, host=HOST, port=PORT)
+    app.run(debug=DEBUG, host=HOST, port=PORT) 

@@ -150,7 +150,7 @@ function findAvailableRow(currentBoard, col) {
   }
   return null;
 }
-
+ 
 function applyFrontendMove(currentBoard, col, piece) {
   if (col < 0 || col >= COLS) return null;
 

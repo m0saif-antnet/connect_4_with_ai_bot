@@ -101,4 +101,4 @@ def score_position(board: list[list[int]], ai_piece: int, opponent_piece: int) -
     score += score_vertical(board, ai_piece, opponent_piece)
     score += score_positive_diagonal(board, ai_piece, opponent_piece)
     score += score_negative_diagonal(board, ai_piece, opponent_piece)
-    return score
+    return score 

@@ -54,7 +54,7 @@ MOVE_ENDPOINT: str = "/move"
 HOME_ENDPOINT: str = "/"
 GAME_PAGE_ENDPOINT: str = "/game"
 
-
+ 
 def get_depth_for_difficulty(difficulty: str) -> int:
     """
     Return the search depth for a given difficulty.

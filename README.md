@@ -176,4 +176,4 @@ This project is developed for **educational purposes** as part of an Artificial 
 # Authors
 
 Artificial Intelligence Course Project
-Faculty of Computer Science and Information Technology Helwan National University
+Faculty of Computer Science and Information Technology Helwan National University 
