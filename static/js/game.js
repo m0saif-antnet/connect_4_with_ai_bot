@@ -168,7 +168,7 @@ function applyFrontendMove(currentBoard, col, piece) {
 
 async function sendAiMoveRequest(currentBoard, difficulty, algorithm) {
   try {
-    const response = await fetch("https://connect4withaibot-production.up.railway.app", {
+    const response = await fetch("https://connect4withaibot-production.up.railway.app" , {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
