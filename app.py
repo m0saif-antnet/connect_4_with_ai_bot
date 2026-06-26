@@ -23,7 +23,9 @@ def create_app() -> Flask:
     @app.route(HOME_ENDPOINT, methods=["GET"])
     def home():
         return render_template("index.html")
-
+    @app.route("/settings")
+    def settings_page():
+        return render_template("settings.html")
     @app.route(GAME_PAGE_ENDPOINT, methods=["GET"])
     def game_page():
         return render_template("game.html")
@@ -105,4 +107,4 @@ def build_error_response(message: str, status_code: int = 400):
 app = create_app()
 
 if __name__ == "__main__":
-    app.run(debug=DEBUG, host=HOST, port=PORT)
+    app.run(debug=DEBUG, host=HOST, port=PORT) 

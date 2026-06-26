@@ -77,4 +77,4 @@ def get_winner(board: list[list[int]]) -> int | None:
         return 1
     if winning_move(board, 2):
         return 2
-    return None
+    return None 

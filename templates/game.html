@@ -7,73 +7,75 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
 </head>
 <body>
+ 
   <main class="page">
     <section class="game-wrapper">
+
       <header class="game-header">
         <h1>Connect Four</h1>
         <p class="subtitle">Human vs AI</p>
       </header>
+      <div class="control-group">
+      <button id="restart-button" type="button">Restart Game</button>
+      </div>
+<div id="restart-modal" class="modal hidden">
+  <div class="modal-content">
+    <h3>Restart Game</h3>
+    <p>What do you want to do?</p>
 
-      <section class="controls-panel">
-        <div class="control-group">
-          <label for="difficulty-select">Difficulty</label>
-          <select id="difficulty-select">
-            <option value="easy">Easy</option>
-            <option value="medium" selected>Medium</option>
-            <option value="hard">Hard</option>
-          </select>
-        </div>
-
-        <div class="control-group">
-          <label for="algorithm-select">Algorithm</label>
-          <select id="algorithm-select">
-            <option value="alpha_beta" selected>Alpha-Beta</option>
-            <option value="minimax">Minimax</option>
-          </select>
-        </div>
-
-        <div class="control-group button-group">
-          <button id="restart-button" type="button">Restart Game</button>
-        </div>
-      </section>
-
+    <button id="restart-match-btn">Restart Match</button>
+    <button id="change-settings-btn">Change Settings</button>
+    <button id="cancel-btn">Cancel</button>
+  </div>
+</div>
       <section class="status-panel">
         <p id="status-message">Your turn</p>
       </section>
-      <div id="timer">Time: 10</div> <!-- NEW: Added countdown timer for player's turn -->
 
       <section class="board-section">
-        <div id="board" class="board" aria-label="Connect Four Board"></div>
+        <div id="board" class="board"></div>
       </section>
 
       <section class="ai-info-panel">
+
         <h2>AI Info</h2>
+
         <div class="info-grid">
+
           <div class="info-item">
             <span class="info-label">Algorithm</span>
             <span id="info-algorithm">alpha_beta</span>
           </div>
+
           <div class="info-item">
             <span class="info-label">Difficulty</span>
             <span id="info-difficulty">medium</span>
           </div>
+
           <div class="info-item">
             <span class="info-label">Last Column</span>
             <span id="info-column">-</span>
           </div>
+
           <div class="info-item">
             <span class="info-label">Score</span>
             <span id="info-score">-</span>
           </div>
+
           <div class="info-item">
             <span class="info-label">Depth</span>
             <span id="info-depth">-</span>
           </div>
+
+
         </div>
+
       </section>
+
     </section>
   </main>
 
   <script src="{{ url_for('static', filename='js/game.js') }}"></script>
+
 </body>
-</html> 
+</html>

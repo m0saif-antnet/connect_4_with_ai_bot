@@ -73,9 +73,9 @@ AI difficulty is controlled using **search depth**.
 
 | Level | Depth |
 |------|------|
-| Easy | 2 |
-| Medium | 4 |
-| Hard | 6 |
+| Easy | 1 |
+| Medium | 2 |
+| Hard | 3 |
 
 Higher depth means:
 - Stronger AI
@@ -176,4 +176,4 @@ This project is developed for **educational purposes** as part of an Artificial 
 # Authors
 
 Artificial Intelligence Course Project
-Faculty of Computer Science and Information Technology Helwan National University
+Faculty of Computer Science and Information Technology Helwan National University 

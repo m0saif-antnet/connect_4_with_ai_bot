@@ -48,4 +48,4 @@ def get_valid_moves(board: list[list[int]]) -> list[int]:
 
 
 def is_board_full(board: list[list[int]]) -> bool:
-    return len(get_valid_moves(board)) == 0
+    return len(get_valid_moves(board)) == 0 

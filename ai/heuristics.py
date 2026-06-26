@@ -10,7 +10,6 @@ from config import (
 )
 
 
-# ─── 1. evaluate_window ───────────────────────────────────────────────
 def evaluate_window(window: list[int], ai_piece: int, opponent_piece: int) -> int:
     """
     Evaluates a single window of 4 cells and returns a score.
@@ -33,7 +32,6 @@ def evaluate_window(window: list[int], ai_piece: int, opponent_piece: int) -> in
     return score
 
 
-# ─── 2. score_center_column ───────────────────────────────────────────
 def score_center_column(board: list[list[int]], ai_piece: int) -> int:
     """
     Rewards the AI for controlling the center column.
@@ -44,7 +42,6 @@ def score_center_column(board: list[list[int]], ai_piece: int) -> int:
     return center_array.count(ai_piece) * CENTER_COLUMN_BONUS
 
 
-# ─── 3. score_horizontal ─────────────────────────────────────────────
 def score_horizontal(board: list[list[int]], ai_piece: int, opponent_piece: int) -> int:
     """
     Scans all horizontal windows and sums their scores.
@@ -57,7 +54,6 @@ def score_horizontal(board: list[list[int]], ai_piece: int, opponent_piece: int)
     return score
 
 
-# ─── 4. score_vertical ───────────────────────────────────────────────
 def score_vertical(board: list[list[int]], ai_piece: int, opponent_piece: int) -> int:
     """
     Scans all vertical windows and sums their scores.
@@ -70,7 +66,6 @@ def score_vertical(board: list[list[int]], ai_piece: int, opponent_piece: int) -
     return score
 
 
-# ─── 5. score_positive_diagonal ──────────────────────────────────────
 def score_positive_diagonal(board: list[list[int]], ai_piece: int, opponent_piece: int) -> int:
     """
     Scans all positive diagonals (bottom-left to top-right) and sums their scores.
@@ -83,7 +78,6 @@ def score_positive_diagonal(board: list[list[int]], ai_piece: int, opponent_piec
     return score
 
 
-# ─── 6. score_negative_diagonal ──────────────────────────────────────
 def score_negative_diagonal(board: list[list[int]], ai_piece: int, opponent_piece: int) -> int:
     """
     Scans all negative diagonals (top-left to bottom-right) and sums their scores.
@@ -96,7 +90,6 @@ def score_negative_diagonal(board: list[list[int]], ai_piece: int, opponent_piec
     return score
 
 
-# ─── 7. score_position ───────────────────────────────────────────────
 def score_position(board: list[list[int]], ai_piece: int, opponent_piece: int) -> int:
     """
     Main heuristic function. Combines all scoring components and returns
@@ -108,4 +101,4 @@ def score_position(board: list[list[int]], ai_piece: int, opponent_piece: int) -
     score += score_vertical(board, ai_piece, opponent_piece)
     score += score_positive_diagonal(board, ai_piece, opponent_piece)
     score += score_negative_diagonal(board, ai_piece, opponent_piece)
-    return score
+    return score 

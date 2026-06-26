@@ -1,64 +1,42 @@
 const ROWS = 6;
 const COLS = 7;
+
+// Game pieces
 const EMPTY = 0;
 const HUMAN_PIECE = 1;
 const AI_PIECE = 2;
-let timeLeft = 10;  // time allowed per turn (in seconds)
-let timerInterval = null; // stores the interval so we can stop it later
+
 let board = [];
 let gameOver = false;
 let isAiThinking = false;
-
+let lastAiMove = null;
+let winningCells = [];
 const boardElement = document.getElementById("board");
 const statusMessageElement = document.getElementById("status-message");
 const restartButton = document.getElementById("restart-button");
-const difficultySelect = document.getElementById("difficulty-select");
-const algorithmSelect = document.getElementById("algorithm-select");
+const restartModal = document.getElementById("restart-modal");
+const restartMatchBtn = document.getElementById("restart-match-btn");
+const changeSettingsBtn = document.getElementById("change-settings-btn");
+const cancelBtn = document.getElementById("cancel-btn");
+const urlParams = new URLSearchParams(window.location.search);
+const difficultySelect = {
+  value: urlParams.get("difficulty") || "medium"
+};
+
+const algorithmSelect = {
+  value: urlParams.get("algorithm") || "alpha_beta"
+};
 
 const infoAlgorithm = document.getElementById("info-algorithm");
 const infoDifficulty = document.getElementById("info-difficulty");
 const infoColumn = document.getElementById("info-column");
 const infoScore = document.getElementById("info-score");
 const infoDepth = document.getElementById("info-depth");
-const humanSound = new Audio("/static/sounds/human.wav"); // sound when human player makes a move
-const aiSound = new Audio("/static/sounds/ai.wav");   // sound when AI makes a move
-const winSound = new Audio("/static/sounds/win.wav"); // sound when a player wins
 
-function startTimer() {
-  stopTimer(); // clear any existing timer before starting a new one
+const humanSound = new Audio("/static/sounds/human.wav");
+const aiSound = new Audio("/static/sounds/ai.wav");
+const winSound = new Audio("/static/sounds/win.wav");
 
-  timeLeft = 10; // reset timer to 10 seconds
-  updateTimerUI(); // update timer display on screen
-
-  timerInterval = setInterval(() => {
-    timeLeft--; // decrease time every second
-    updateTimerUI();  // update UI
-
-    if (timeLeft <= 0) {   // if time runs out
-      stopTimer();     // stop the timer
-      updateStatusMessage("Time is up ⏰");  // show message to player 
-    }
-  }, 1000);   // runs every 1 second
-}
-
-function stopTimer() { 
-  if (timerInterval) {
-    clearInterval(timerInterval);   // stop the interval
-    timerInterval = null;    // reset variable
-  }
-}
-
-function updateTimerUI() {
-  const timerElement = document.getElementById("timer");
-
-  timerElement.textContent = "Time: " + timeLeft;  // display remaining time
-
-  if (timeLeft <= 3) {
-    timerElement.style.color = "red";  // change color when time is running low to red color
-  } else {
-    timerElement.style.color = "#facc15"; // yellow color
-  }
-}
 function createEmptyBoard() {
   return Array.from({ length: ROWS }, () => Array(COLS).fill(EMPTY));
 }
@@ -67,12 +45,13 @@ function initializeGame() {
   board = createEmptyBoard();
   gameOver = false;
   isAiThinking = false;
-  
+  lastAiMove = null;
+  winningCells = [];
+
   updateStatusMessage("Your turn");
   resetAiInfo();
   renderBoard(board);
   syncSettingsInfo();
-    startTimer();
 }
 
 function renderBoard(currentBoard) {
@@ -90,11 +69,22 @@ function renderBoard(currentBoard) {
       } else if (currentBoard[row][col] === AI_PIECE) {
         cell.classList.add("player-two");
       }
+      if (
+        lastAiMove &&
+        lastAiMove.row === row &&
+        lastAiMove.col === col
+      ) {
+        cell.classList.add("last-move");
+      }
 
       if (gameOver || isAiThinking) {
         cell.classList.add("disabled");
       }
-
+      if (
+      winningCells.some(c => c.row === row && c.col === col)
+      ) {
+        cell.classList.add("winning-cell");
+      }
       cell.addEventListener("click", handleCellClick);
       boardElement.appendChild(cell);
     }
@@ -103,22 +93,25 @@ function renderBoard(currentBoard) {
 
 function handleCellClick(event) {
   if (gameOver || isAiThinking) return;
-
+  lastAiMove = null;
   const col = getColumnFromClick(event);
   if (col === null) return;
 
-  const success = applyFrontendMove(board, col, HUMAN_PIECE);
+  const row = applyFrontendMove(board, col, HUMAN_PIECE);
+  const success = row !== null;
   if (!success) {
     updateStatusMessage("Invalid move. Please choose another column.");
     return;
   }
 
   renderBoard(board);
-
-  startTimer();
-
-  if (checkWin(board, HUMAN_PIECE)) {
+  const humanWin = checkWin(board, HUMAN_PIECE);
+  if (humanWin) {
+    winningCells = humanWin;
+    lastAiMove = null;
     gameOver = true;
+    winSound.play();
+    launchConfetti();
     updateStatusMessage("You win!");
     renderBoard(board);
     return;
@@ -130,12 +123,17 @@ function handleCellClick(event) {
     renderBoard(board);
     return;
   }
-
   isAiThinking = true;
   updateStatusMessage("AI is thinking...");
   renderBoard(board);
 
-  sendAiMoveRequest(board, difficultySelect.value, algorithmSelect.value);
+  setTimeout(() => {
+    sendAiMoveRequest(
+      board,
+      difficultySelect.value,
+      algorithmSelect.value
+    );
+  }, 600);
 }
 
 function getColumnFromClick(event) {
@@ -152,18 +150,20 @@ function findAvailableRow(currentBoard, col) {
   }
   return null;
 }
-
+ 
 function applyFrontendMove(currentBoard, col, piece) {
-  if (col < 0 || col >= COLS) return false;
+  if (col < 0 || col >= COLS) return null;
 
   const row = findAvailableRow(currentBoard, col);
-  if (row === null) return false;
+  if (row === null) return null;
 
   currentBoard[row][col] = piece;
-    if (piece === HUMAN_PIECE) {
-    humanSound.play();  // play sound when human makes a move
+
+  if (piece === HUMAN_PIECE) {
+    humanSound.play();
   }
-  return true;
+
+  return row;
 }
 
 async function sendAiMoveRequest(currentBoard, difficulty, algorithm) {
@@ -188,7 +188,9 @@ async function sendAiMoveRequest(currentBoard, difficulty, algorithm) {
 
     handleAiResponse(data);
   } catch (error) {
-    updateStatusMessage(error.message || "An error occurred while contacting the server.");
+    updateStatusMessage(
+      error.message || "An error occurred while contacting the server."
+    );
     isAiThinking = false;
     renderBoard(board);
   }
@@ -205,20 +207,27 @@ function handleAiResponse(responseData) {
     return;
   }
 
-  applyFrontendMove(board, aiCol, AI_PIECE);
-   aiSound.play();  // play sound when AI makes a move
+  const aiRow = applyFrontendMove(board, aiCol, AI_PIECE);
+  lastAiMove = { row: aiRow, col: aiCol };
+  aiSound.play();
+
   isAiThinking = false;
 
   renderBoard(board);
   updateAiInfo(responseData);
 
-  if (checkWin(board, AI_PIECE)) {
+  const aiWin = checkWin(board, AI_PIECE);
+  if (aiWin) {
+    winningCells = aiWin;
+    lastAiMove = null;
     gameOver = true;
-    winSound.play();  // play sound when a player wins the game
+    winSound.play();
+    shakeScreen();
     updateStatusMessage(`AI wins. Column ${aiCol}`);
     renderBoard(board);
     return;
   }
+
   if (isBoardFull(board)) {
     gameOver = true;
     updateStatusMessage("Draw game.");
@@ -227,10 +236,23 @@ function handleAiResponse(responseData) {
   }
 
   updateStatusMessage(`Your turn. AI played column ${aiCol}`);
-
-  startTimer();
 }
 
+// Win effect
+function launchConfetti() {
+  for (let i = 0; i < 60; i++) {
+    const c = document.createElement("div");
+    c.classList.add("confetti");
+    c.style.left = Math.random() * 100 + "vw";
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 3000);
+  }
+}
+// Lose effect
+function shakeScreen() {
+  document.body.classList.add("shake");
+  setTimeout(() => document.body.classList.remove("shake"), 500);
+}
 function updateStatusMessage(message) {
   statusMessageElement.textContent = message;
 }
@@ -281,11 +303,16 @@ function checkHorizontalWin(currentBoard, piece) {
         currentBoard[row][col + 2] === piece &&
         currentBoard[row][col + 3] === piece
       ) {
-        return true;
+        return [
+          { row, col },
+          { row, col: col + 1 },
+          { row, col: col + 2 },
+          { row, col: col + 3 }
+        ];
       }
     }
   }
-  return false;
+  return null;
 }
 
 function checkVerticalWin(currentBoard, piece) {
@@ -297,11 +324,16 @@ function checkVerticalWin(currentBoard, piece) {
         currentBoard[row + 2][col] === piece &&
         currentBoard[row + 3][col] === piece
       ) {
-        return true;
+        return [
+          { row, col },
+          { row: row + 1, col },
+          { row: row + 2, col },
+          { row: row + 3, col }
+        ];
       }
     }
   }
-  return false;
+  return null;
 }
 
 function checkPositiveDiagonalWin(currentBoard, piece) {
@@ -313,11 +345,16 @@ function checkPositiveDiagonalWin(currentBoard, piece) {
         currentBoard[row - 2][col + 2] === piece &&
         currentBoard[row - 3][col + 3] === piece
       ) {
-        return true;
+        return [
+          { row, col },
+          { row: row - 1, col: col + 1 },
+          { row: row - 2, col: col + 2 },
+          { row: row - 3, col: col + 3 }
+        ];
       }
     }
   }
-  return false;
+  return null;
 }
 
 function checkNegativeDiagonalWin(currentBoard, piece) {
@@ -329,15 +366,51 @@ function checkNegativeDiagonalWin(currentBoard, piece) {
         currentBoard[row + 2][col + 2] === piece &&
         currentBoard[row + 3][col + 3] === piece
       ) {
-        return true;
+        return [
+          { row, col },
+          { row: row + 1, col: col + 1 },
+          { row: row + 2, col: col + 2 },
+          { row: row + 3, col: col + 3 }
+        ];
       }
     }
   }
-  return false;
+  return null;
 }
+function launchConfetti() {
+  const colors = ["#facc15", "#ef4444", "#22c55e", "#3b82f6", "#a855f7"];
 
-restartButton.addEventListener("click", restartGame);
-difficultySelect.addEventListener("change", syncSettingsInfo);
-algorithmSelect.addEventListener("change", syncSettingsInfo);
+  for (let i = 0; i < 80; i++) {
+    const confetti = document.createElement("div");
+    confetti.classList.add("confetti");
+    confetti.style.left = Math.random() * 100 + "vw";
+    confetti.style.background =
+      colors[Math.floor(Math.random() * colors.length)];
+    confetti.style.animationDuration =
+      (Math.random() * 2 + 1) + "s";
 
+    document.body.appendChild(confetti);
+
+    setTimeout(() => confetti.remove(), 3000);
+  }
+}
+// Open popup instead of instant restart
+restartButton.addEventListener("click", () => {
+  restartModal.classList.remove("hidden");
+});
+
+// Restart match (same settings)
+restartMatchBtn.addEventListener("click", () => {
+  restartModal.classList.add("hidden");
+  restartGame();
+});
+
+
+changeSettingsBtn.addEventListener("click", () => {
+  window.location.href = "/settings"; 
+});
+
+cancelBtn.addEventListener("click", () => {
+  restartModal.classList.add("hidden");
+});
 initializeGame();

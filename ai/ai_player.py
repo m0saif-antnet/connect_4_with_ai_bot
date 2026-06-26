@@ -63,4 +63,4 @@ class AIPlayer:
             "depth": self.depth,
             "algorithm": self.algorithm,
             "difficulty": self.difficulty,
-        }
+        } 
