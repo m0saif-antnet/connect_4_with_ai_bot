@@ -29,6 +29,7 @@ VALID_ALGORITHMS: set[str] = {
     "alpha_beta",
 }
 
+
 # Default Gameplay Settings
 DEFAULT_DIFFICULTY: str = "medium"
 DEFAULT_SEARCH_DEPTH: int = DIFFICULTY_DEPTH_MAP[DEFAULT_DIFFICULTY]
